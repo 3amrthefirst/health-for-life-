@@ -43,7 +43,17 @@ return [
         'admin' => [
             'driver' => 'session',
             'provider' => 'admins',
-            
+
+        ],
+        'doctor' => [
+            'driver' => 'passport',
+            'provider' => 'doctors',
+
+        ],
+        'patient' => [
+            'driver' => 'passport',
+            'provider' => 'patients',
+
         ],
     ],
 
@@ -73,6 +83,14 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\AdminModel::class,
+        ],
+        'patients' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\PatientsModel::class,
+        ],
+        'doctors' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\DoctorModel::class,
         ],
 
         // 'users' => [

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
-class DoctorModel extends Authenticatable
+class DoctorModel extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable;
+    use HasFactory, Notifiable,HasApiTokens;
 
     protected $table = 'doctors';
     protected $guarded = array();
@@ -16,8 +19,10 @@ class DoctorModel extends Authenticatable
         'specialties_id' => 'string',
         'type' => 'string',
         'total_points' => 'string',
-        'status' => 'string'
+        'status' => 'string',
+        'email_verified_at' => 'datetime'
     ];
+
 
     public function doctor()
     {

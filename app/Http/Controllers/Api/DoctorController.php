@@ -13,8 +13,11 @@ use App\Models\PrescriptionModel;
 use App\Models\SpecialtieModel;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use Storage;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Validator;
+use function PHPUnit\Framework\throwException;
 
 class DoctorController extends Controller
 {
@@ -82,6 +85,7 @@ class DoctorController extends Controller
             $Data->latitude = "";
             $Data->longitude = "";
 
+
             $SId = SpecialtieModel::first();
             if(!empty($SId)){
                 $Data->specialties_id = $SId['id'];
@@ -113,8 +117,9 @@ class DoctorController extends Controller
                     $D_data['specialities_name'] = "";
                 }
                 unset($D_data['doctor']);
-
+                event(new \App\Events\VerifyDoctorEvent($Data));
                 return APIResponse(200, __('api_msg.User_registration_sucessfuly'), array($D_data));
+
             } else {
                 return APIResponse(400, __('api_msg.data_not_save'));
             }
@@ -1196,4 +1201,20 @@ class DoctorController extends Controller
         }
     }
 
+    public function VerifyAccount(Request $request)
+    {
+        $user = DoctorModel::where('email' , $request->email)->first();
+        if($request->code == "068902")
+        {
+            $user->markEmailAsVerified();
+            return response()->json(array(
+                'code' => 200,
+                'status' => 1 ,
+                'errors' => null ,
+                'message' => "you're verified now " ,
+                'token' => $user->createToken('passport_token')->accessToken));
+        }else{
+            throw new BadRequestHttpException('incorrect verify code');
+        }
+    }
 }

@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AppointmentModel;
+use App\Models\DoctorModel;
 use App\Models\NotificationModel;
 use App\Models\PatientsModel;
 use App\Models\SpecialtieModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Storage;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Validator;
 
 class UsersController extends Controller
@@ -197,7 +199,7 @@ class UsersController extends Controller
 
                 // QRCode
                 QRCodeGenerate($user_data['id']);
-                
+                event(new \App\Events\VerifyDoctorEvent($user_data));
                 return APIResponse(200, __('api_msg.User_registration_sucessfuly'), array($user_data));
             } else {
                 return APIResponse(400, __('api_msg.data_not_save'));
@@ -627,5 +629,22 @@ class UsersController extends Controller
             return APIResponse(400, __('api_msg.data_not_found'));
         }
     }
-    
+
+    public function VerifyAccount(Request $request)
+    {
+        $user = PatientsModel::where('email' , $request->email)->first();
+        if($request->code == "068902")
+        {
+            $user->markEmailAsVerified();
+            return response()->json(array(
+                'code' => 200,
+                'status' => 1 ,
+                'errors' => null ,
+                'message' => "you're verified now " ,
+                'token' => $user->createToken('passport_token')->accessToken));
+        }else{
+            throw new BadRequestHttpException('incorrect verify code');
+        }
+    }
+
 }

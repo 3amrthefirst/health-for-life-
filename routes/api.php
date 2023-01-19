@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\VerifyDoctorEvent;
+use App\Http\Controllers\VerifyEmailController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HomeController;
@@ -37,6 +39,8 @@ Route::post('make_appoinment', [HomeController::class, 'MakeAppoinment'])->name(
 Route::post('getTimeSlotByDoctorId', [HomeController::class, 'GetTimeSlotByDoctorId'])->name('get-time-slot-by-doctorId');
 
 // ---------------- DoctorController ----------------
+Route::post('doctor/verify' , [DoctorController::class,'VerifyAccount']);
+Route::group(['middleware' => ['verified' , 'auth:doctor'] , 'prefix' => 'doctor'] , function (){
 Route::post('doctor_login', [DoctorController::class, 'DoctorLogin'])->name('doctor-login');
 Route::post('doctor_registration', [DoctorController::class, 'DoctorRegistration'])->name('doctor-registration');
 Route::post('doctor_forgot_password', [DoctorController::class, 'DoctorForgotPassword'])->name('doctor-forgot-password');
@@ -53,15 +57,20 @@ Route::post('add_prescription', [DoctorController::class, 'AddPrescription'])->n
 Route::post('getPrescription', [DoctorController::class, 'GetPrescription'])->name('get-prescription');
 Route::post('delete_prescription', [DoctorController::class, 'DeletePrescription'])->name('delete-prescription');
 Route::post('update_appoinment', [DoctorController::class, 'UpdateAppoinment'])->name('update-appoinment');
+});
 
 // ---------------- UsersController ----------------
-Route::post('login', [UsersController::class, 'Login'])->name('user-login');
-Route::post('registration', [UsersController::class, 'Registration'])->name('user-registration');
-Route::post('password_change', [UsersController::class, 'PasswordChange'])->name('password-change');
-Route::post('profile', [UsersController::class, 'Profile'])->name('user-profile');
-Route::post('updateprofile', [UsersController::class, 'UpdateProfile'])->name('update-profile');
-Route::post('get_all_appoinment', [UsersController::class, 'GetAllAppoinment'])->name('get-all-appoinment');
-Route::post('get_patient_appoinment', [UsersController::class, 'GetPatientAppoinment'])->name('get-patient-appoinment');
+Route::post('user/verify' , [UsersController::class,'VerifyAccount']);
+Route::group(['middleware' => ['verified' , 'auth:patients'] , 'prefix' => 'user'] , function (){
+    Route::post('login', [UsersController::class, 'Login'])->name('user-login');
+    Route::post('registration', [UsersController::class, 'Registration'])->name('user-registration');
+    Route::post('password_change', [UsersController::class, 'PasswordChange'])->name('password-change');
+    Route::post('profile', [UsersController::class, 'Profile'])->name('user-profile');
+    Route::post('updateprofile', [UsersController::class, 'UpdateProfile'])->name('update-profile');
+    Route::post('get_all_appoinment', [UsersController::class, 'GetAllAppoinment'])->name('get-all-appoinment');
+    Route::post('get_patient_appoinment', [UsersController::class, 'GetPatientAppoinment'])->name('get-patient-appoinment');
+});
+
 
 // ---------------- TestController ----------------
 Route::post('getTestTimeSlot', [TestController::class, 'GetTestTimeSlot'])->name('get-test-time-slot');

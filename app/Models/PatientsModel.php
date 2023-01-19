@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
-class PatientsModel extends Authenticatable
+class PatientsModel  extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $table = 'patients';
     protected $guarded = array();
@@ -16,7 +20,8 @@ class PatientsModel extends Authenticatable
         'patient_id' => 'string',
         'type' => 'string',
         'total_points' => 'string',
-        'status' => 'string'
+        'status' => 'string',
+        'email_verified_at' => 'datetime'
     ];
 
     public function insurance_company()
