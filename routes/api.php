@@ -8,8 +8,7 @@ use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\UsersController;
 use App\Http\Controllers\Api\TestController;
-use App\Http\Controllers\Api\RatingController;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -39,10 +38,9 @@ Route::post('make_appoinment', [HomeController::class, 'MakeAppoinment'])->name(
 Route::post('getTimeSlotByDoctorId', [HomeController::class, 'GetTimeSlotByDoctorId'])->name('get-time-slot-by-doctorId');
 
 // ---------------- DoctorController ----------------
-Route::post('doctor/verify' , [DoctorController::class,'VerifyAccount']);
-Route::group(['middleware' => ['verified' , 'auth:doctor'] , 'prefix' => 'doctor'] , function (){
 Route::post('doctor_login', [DoctorController::class, 'DoctorLogin'])->name('doctor-login');
 Route::post('doctor_registration', [DoctorController::class, 'DoctorRegistration'])->name('doctor-registration');
+Route::group(['middleware' => ['verified' , 'auth:doctor'] , 'prefix' => 'doctor'] , function (){
 Route::post('doctor_forgot_password', [DoctorController::class, 'DoctorForgotPassword'])->name('doctor-forgot-password');
 Route::post('doctor_upcoming_appoinment', [DoctorController::class, 'DoctorUpcomingAppoinment'])->name('doctor-upcoming-appoinment');
 Route::post('appoinment_status_update', [DoctorController::class, 'AppoinmentStatusUpdate'])->name('appoinment-status-update');
@@ -60,10 +58,9 @@ Route::post('update_appoinment', [DoctorController::class, 'UpdateAppoinment'])-
 });
 
 // ---------------- UsersController ----------------
-Route::post('user/verify' , [UsersController::class,'VerifyAccount']);
+Route::post('login', [UsersController::class, 'Login'])->name('user-login');
+Route::post('registration', [UsersController::class, 'Registration'])->name('user-registration');
 Route::group(['middleware' => ['verified' , 'auth:patients'] , 'prefix' => 'user'] , function (){
-    Route::post('login', [UsersController::class, 'Login'])->name('user-login');
-    Route::post('registration', [UsersController::class, 'Registration'])->name('user-registration');
     Route::post('password_change', [UsersController::class, 'PasswordChange'])->name('password-change');
     Route::post('profile', [UsersController::class, 'Profile'])->name('user-profile');
     Route::post('updateprofile', [UsersController::class, 'UpdateProfile'])->name('update-profile');
@@ -76,3 +73,15 @@ Route::group(['middleware' => ['verified' , 'auth:patients'] , 'prefix' => 'user
 Route::post('getTestTimeSlot', [TestController::class, 'GetTestTimeSlot'])->name('get-test-time-slot');
 Route::post('make_test_appoinment', [TestController::class, 'MakeTestAppoinment'])->name('make-test-appoinment');
 Route::post('get_test_patient_appoinment', [TestController::class, 'GetTestPatientAppoinment'])->name('get-test-patient-appoinment');
+
+
+// Verify email
+Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify');
+
+// Resend link to verify email
+Route::post('/email/verify/resend', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth:api', 'throttle:6,1'])->name('verification.send');

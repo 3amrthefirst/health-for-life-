@@ -8,6 +8,7 @@ use App\Models\DoctorModel;
 use App\Models\NotificationModel;
 use App\Models\PatientsModel;
 use App\Models\SpecialtieModel;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Storage;
@@ -198,8 +199,8 @@ class UsersController extends Controller
                 }
 
                 // QRCode
-                QRCodeGenerate($user_data['id']);
-                event(new \App\Events\VerifyDoctorEvent($user_data));
+                //QRCodeGenerate($user_data['id']);
+                event(new Registered($user_data));
                 return APIResponse(200, __('api_msg.User_registration_sucessfuly'), array($user_data));
             } else {
                 return APIResponse(400, __('api_msg.data_not_save'));

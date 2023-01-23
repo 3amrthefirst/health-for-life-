@@ -12,6 +12,7 @@ use App\Models\NotificationModel;
 use App\Models\PrescriptionModel;
 use App\Models\SpecialtieModel;
 use DateTime;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use Storage;
@@ -117,7 +118,7 @@ class DoctorController extends Controller
                     $D_data['specialities_name'] = "";
                 }
                 unset($D_data['doctor']);
-                event(new \App\Events\VerifyDoctorEvent($Data));
+                event(new Registered($Data));
                 return APIResponse(200, __('api_msg.User_registration_sucessfuly'), array($D_data));
 
             } else {
