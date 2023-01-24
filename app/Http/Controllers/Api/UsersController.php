@@ -8,12 +8,15 @@ use App\Models\DoctorModel;
 use App\Models\NotificationModel;
 use App\Models\PatientsModel;
 use App\Models\SpecialtieModel;
+use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Storage;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Validator;
+use Laravel\Passport\TokenRepository;
+
 
 class UsersController extends Controller
 {
@@ -50,7 +53,7 @@ class UsersController extends Controller
 
                 $email = $request->email;
                 $password = isset($_REQUEST['password']) ? $_REQUEST['password'] : '';
-                $type = isset($_REQUEST['type']) ? $_REQUEST['type'] : '';
+                $type = isset($_REQUEST['type']) ? $_REQUEST['type'] : '1';
                 $device_token = isset($_REQUEST['device_token']) ? $_REQUEST['device_token'] : '';
 
                 if ($type == '1') {
@@ -76,7 +79,7 @@ class UsersController extends Controller
                             $path = Get_Image($this->folder4, $data['insurance_card_pic']);
                             $data['insurance_card_pic'] = $path;
                         }
-
+                        $data['token'] = $data->createToken('passport_token')->accessToken;
                         return APIResponse(200, __('api_msg.login_successfully'), array($data));
                     } else {
                         return APIResponse(400, __('api_msg.email_pass_worng'));

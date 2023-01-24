@@ -176,6 +176,7 @@ class DoctorController extends Controller
                     } else {
                         $D_data['profile_img'] = asset('/assets/imgs/1.jpg');
                     }
+                    $D_data['token'] = $D_data->createToken('passport_token')->accessToken;
                     return APIResponse(200, __('api_msg.login_successfully'), array($D_data));
                 } else {
                     return APIResponse(400, __('api_msg.email_pass_worng'));

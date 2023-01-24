@@ -43,7 +43,7 @@ class HomeController extends Controller
                 $data['id'] = "55";
                 $data['key'] = "about-us";
                 $data['value'] = route('AboutUS');
-                
+
                 $data1['id'] = "56";
                 $data1['key'] = "privacy-policy";
                 $data1['value'] = route('privacyPolicy');
@@ -158,7 +158,7 @@ class HomeController extends Controller
 			}
 
             $appointment_slots = Appointment_slotsModel::where('doctor_id', $doctor_id)->where('week_day', $wwekDay)->get();
-            
+
             $goodData = [];
             foreach ($appointment_slots as $key => $slotsvalue) {
                 $startTime = date('h:i A', strtotime($slotsvalue['start_time']));

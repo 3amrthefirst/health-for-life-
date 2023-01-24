@@ -50,7 +50,7 @@ return [
             'provider' => 'doctors',
 
         ],
-        'patient' => [
+        'patients' => [
             'driver' => 'passport',
             'provider' => 'patients',
 
