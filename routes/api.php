@@ -22,7 +22,7 @@ use App\Http\Controllers\Api\TestController;
 */
 
 // ---------------- HomeController ----------------
-Route::post('genaral_setting', [HomeController::class, 'GeneralSetting'])->name('general-setting');
+Route::get('genaral_setting', [HomeController::class, 'GeneralSetting'])->name('general-setting');
 Route::post('patient_appoinment', [HomeController::class, 'PatientAppoinment'])->name('patien-appoinment');
 Route::post('doctor_detail', [HomeController::class, 'DoctorDetail'])->name('doctor-detail');
 Route::post('appoinment_detail', [HomeController::class, 'AppoinmentDetail'])->name('appoinment-detail');
